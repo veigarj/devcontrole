@@ -8,7 +8,7 @@ export default function DashboardHeader() {
             <Link href="/dashboard" className='text-white hover:font-bold duration-300'>
                 Chamados
             </Link>
-            <Link href="/dashboard/custumer" className='text-white hover:font-bold duration-300'>
+            <Link href="/dashboard/customer" className='text-white hover:font-bold duration-300'>
                 Clientes
             </Link>
         </header>
