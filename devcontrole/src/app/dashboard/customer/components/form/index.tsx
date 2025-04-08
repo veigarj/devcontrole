@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Input } from "@/app/dashboard/components/input"
+import { Input } from "@/components/input"
 
 const schema = z.object({
     name: z.string().min(1, "Nome completo é obrigatório"),
