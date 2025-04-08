@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/input"
+import { api } from "@/lib/api"
+import { useRouter } from "next/navigation" 
 
 const schema = z.object({
     name: z.string().min(1, "Nome completo é obrigatório"),
@@ -18,13 +20,23 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function NewCustomerForm() {
+export function NewCustomerForm({ userId }: { userId: string}) {
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema)
     })
 
-    function handleRegisterCustumer(data: FormData){
-        console.log(data)
+    const router = useRouter();
+
+    async function handleRegisterCustumer(data: FormData){
+        await api.post("/api/customer", {
+            name: data.name,
+            phone: data.phone,
+            email: data.email,
+            address: data.address,
+            userId: userId
+        })
+
+        router.replace("/dashboard/customer")
     }
   return (
     <form className="mt-6 flex flex-col" onSubmit={handleSubmit(handleRegisterCustumer)} >
