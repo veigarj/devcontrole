@@ -3,6 +3,37 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prismaClient from "@/lib/prisma";
 
+export async function DELETE(request: Request) {
+    // valide session
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user){
+        return NextResponse.json({ error: "Not authorized"}, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("id");
+
+    if (!userId) {
+        return NextResponse.json({ error: "Failed delete customer"}, { status: 400 })
+    }
+
+    try {
+        await prismaClient.custumer.delete({
+            where: {
+                id: userId as string
+            }
+        })
+
+        return NextResponse.json({ message: "Customer deleted com sucesso!"})
+
+    } catch (err) {
+        return NextResponse.json({ error: "Failed delete customer"}, { status: 400 })
+    }
+
+    return NextResponse.json({ ok: true})
+}
+
 export async function POST(request: Request) {
     
     const session = await getServerSession(authOptions);
