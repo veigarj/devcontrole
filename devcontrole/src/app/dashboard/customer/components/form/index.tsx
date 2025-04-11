@@ -24,6 +24,7 @@ export function NewCustomerForm({ userId }: { userId: string}) {
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema)
     })
+    
 
     const router = useRouter();
 
