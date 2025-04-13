@@ -22,6 +22,31 @@ export default async function NewTicket() {
         }
     })
 
+    async function handleRegisterTicket(formData: FormData){
+        "use server"
+
+        const name = formData.get("name")
+        const description = formData.get("description")
+        const customerId = formData.get("custumer")
+
+        if(!name || !description || !customerId){
+            return;
+        }
+
+        await prismaClient.ticket.create({
+            data: {
+                name: name as string,
+                description: description as string,
+                custumerId: customerId as string,
+                status: "ABERTO",
+                userId: session?.user.id
+            }
+        })
+
+        console.log("Ticket aberto com sucesso")
+        redirect("/dashboard")
+    }
+
   return (
     <Container>
         <main className='mt-9 mb-2'>
@@ -32,19 +57,21 @@ export default async function NewTicket() {
             <h1 className='text-3xl font-bold'>Novo Chamado</h1>
         </div>
 
-        <form className='flex flex-col mt-5'>
+        <form className='flex flex-col mt-5' action={handleRegisterTicket}>
             <label className="mb-1 font-medium text-lg">Nome do chamado</label>
             <input 
                 className='w-full border-gray-400 border-1 rounded-md px-2 mb-2 h-11'
                 type="text"
                 placeholder="Digite o nome do chamado"
                 required
+                name='name'
             />
             <label className="mb-1 font-medium text-lg">Nome do chamado</label>
             <textarea 
                 className='w-full border-gray-400 border-2 rounded-md px-2 mb-2 h-24 resize-none'
                 placeholder="Digite o nome do chamado"
                 required
+                name='description'
             ></textarea>
 
             {customers.length !== 0 && (
@@ -52,6 +79,7 @@ export default async function NewTicket() {
                     <label className="mb-1 font-medium text-lg">Selecione o cliente</label>
                     <select
                     className='w-full border-gray-400 border-2 rounded-md px-2 mb-2 h-11 resize-none bg-white'
+                    name='custumer'
                     >
                     {customers.map( customer => (
                         <option key={customer.id}value={customer.id}>{customer.name}</option>
