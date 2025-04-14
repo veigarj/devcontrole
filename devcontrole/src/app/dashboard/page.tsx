@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { TicketItem } from '@/app/dashboard/components/ticket/index'
+import prismaClient from '@/lib/prisma'
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
@@ -11,6 +12,18 @@ export default async function Dashboard() {
   if (!session || !session.user) {
     redirect('/')
   }
+
+  const tickets = await prismaClient.ticket.findMany({
+    where: {
+      userId: session.user.id,
+      status: "ABERTO"
+    },
+    include: {
+      custumer: true,
+    }
+  })
+
+  console.log(tickets)
 
   return (
     <Container>
@@ -32,8 +45,10 @@ export default async function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            <TicketItem />
-            <TicketItem />
+            {tickets.map(ticket => (
+              <TicketItem key={ticket.id} />
+            ))}
+            
 
           </tbody>
         </table>
